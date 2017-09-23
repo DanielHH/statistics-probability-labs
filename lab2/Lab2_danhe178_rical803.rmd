@@ -1,0 +1,169 @@
+---
+title: "lab2_danhe178_rical803"
+author: "Daniel Herzegh & Richard Friberg"
+date: "2017-10-03"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### Uppgift 1 Likelihoodfunktioner
+
+## a)
+
+```{r, echo = TRUE}
+llgamma <- function(x, alpha, beta) {
+  return(length(x) * (alpha * log(beta) - lgamma(alpha)) + (alpha -1) * sum(log(x)) - beta * sum(x))
+}
+```
+
+## b)
+```{r, echo = TRUE}
+x1 <- rgamma(n = 10, shape = 4, scale = 1)
+x2 <- rgamma(n = 100, shape = 4, scale = 1)
+
+tendraws <- c()
+hundreddraws <- c()
+steps <- c()
+
+i = 0.01
+while(i <= 3) {
+  tendraws <- c(tendraws, llgamma(x1, alpha = 4, beta = i))
+  hundreddraws <- c(hundreddraws, llgamma(x2, alpha = 4, beta = i))
+  steps <- c(steps, i)
+  i <- i + 0.01
+}
+
+```
+
+```{r, echo = TRUE}
+# plot for ten draws
+plot(steps, tendraws)
+```
+
+```{r, echo = TRUE}
+# plot for hundred draws
+plot(steps, hundreddraws)
+```
+
+```{r, echo = TRUE}
+# Undersöker och returnerar vilket betavärde som loglikelyhoodfunktionen får sitt maxvärde på
+findMaxIndex <- function(vect) {
+  i <- NULL
+  currentMax <- -Inf
+  x <- 1
+  while (x < length(vect)) {
+    if (vect[x] > currentMax) {
+      currentMax <- vect[x]
+      i <- x
+    }
+    x <- x + 1
+  }
+  return(i/100)
+}
+
+findMaxIndex(tendraws)
+findMaxIndex(hundreddraws)
+```
+
+Det varierar vilket av de upprepade värdena för beta som ger maximala värdet på loglikelihoodfunktionen, men ökar man antalet dragningar går denna siffra mot 1.0.
+
+
+## c)
+
+```{r, echo = TRUE}
+x1 <- rgamma(n = 10, shape = 4, scale = 1)
+x2 <- rgamma(n = 100, shape = 4, scale = 1)
+
+tendraws <- c()
+hundreddraws <- c()
+steps <- c()
+
+i = 0.01
+while(i <= 10) {
+  tendraws <- c(tendraws, llgamma(x1, alpha = i, beta = 1))
+  hundreddraws <- c(hundreddraws, llgamma(x2, alpha = i, beta = 1))
+  steps <- c(steps, i)
+  i <- i + 0.01
+}
+
+```
+
+```{r, echo = TRUE}
+# plot for ten draws
+plot(steps, tendraws)
+```
+
+```{r, echo = TRUE}
+# plot for hundred draws
+plot(steps, hundreddraws)
+```
+
+```{r, echo = TRUE}
+# Undersöker och returnerar vilket alphavärde som loglikelyhoodfunktionen får sitt maxvärde på
+findMaxIndex <- function(vect) {
+  i <- NULL
+  currentMax <- -999999
+  x <- 1
+  while (x < length(vect)) {
+    if (vect[x] > currentMax) {
+      currentMax <- vect[x]
+      i <- x
+    }
+    x <- x + 1
+  }
+  return(i/100)
+}
+
+findMaxIndex(tendraws)
+findMaxIndex(hundreddraws)
+```
+
+Det varierar vilket av de upprepade värdena för alpha som ger maximala värdet på loglikelihoodfunktionen, men ökar man antalet dragningar går denna siffra mot 4.0.
+
+
+## d) FRÅGA PÅ LABBEN!
+
+```{r, echo = TRUE}
+llnormal <- function(x, mu, sigma2) {
+  
+}
+
+```
+
+
+## e) 
+
+
+### Uppgift 2
+```{r, echo = TRUE}
+gamma_beta_mle <- function(x, alpha) {
+  return(length(x)*alpha*1/sum(x))
+}
+x1 <- rgamma(n = 10, shape = 4, scale = 1)
+x2 <- rgamma(n = 100, shape = 4, scale = 1)
+gamma_beta_mle(x1, 2)
+gamma_beta_mle(x2, 2)
+```
+
+Vi testade att öka antalet dragningar och drar slutsatsen att estimatet går mot 0.5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
