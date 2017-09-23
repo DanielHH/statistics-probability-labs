@@ -138,7 +138,7 @@ llnormal <- function(x, mu, sigma2) {
 ## e) 
 
 
-### Uppgift 2
+### Uppgift 2 Punktskattning med MLE i en gammafördelning
 ```{r, echo = TRUE}
 gamma_beta_mle <- function(x, alpha) {
   return(length(x)*alpha*1/sum(x))
@@ -153,7 +153,7 @@ Vi testade att öka antalet dragningar och drar slutsatsen att estimatet går mo
 
 
 
-
+### Uppgift 3 Punktskattning med MLE i en normalfördelning
 
 
 
