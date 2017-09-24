@@ -22,6 +22,7 @@ llgamma <- function(x, alpha, beta) {
 
 ## b)
 ```{r, echo = TRUE}
+set.seed(4711) #FRÅGA OM VI SKA ANVÄNDA SEED ELLER EJ
 x1 <- rgamma(n = 10, shape = 4, scale = 1)
 x2 <- rgamma(n = 100, shape = 4, scale = 1)
 
@@ -36,7 +37,6 @@ while(i <= 3) {
   steps <- c(steps, i)
   i <- i + 0.01
 }
-
 ```
 
 ```{r, echo = TRUE}
@@ -156,14 +156,139 @@ Vi testade att öka antalet dragningar och drar slutsatsen att estimatet går mo
 ### Uppgift 3 Punktskattning med MLE i en normalfördelning
 
 
+## a)
+
+```{r, echo = TRUE}
+norm_mu_mle <- function(x) {
+  return(1/length(x)*sum(x))
+}
+
+norm_sigma2_mle <- function(x) {
+  sumhelp <- 0
+  j <- 1
+  while(j <= length(x)) {
+    sumhelp <- sumhelp + (x[j] - norm_mu_mle(x))**2
+    j <- j + 1
+  }
+  return(1/length(x)*sumhelp)
+}
+```
+
+
+```{r, echo = TRUE}
+test_x <- 1:10
+
+norm_mu_mle(x = test_x)
+
+norm_sigma2_mle(x = test_x)
+
+```
+
+
+## b)
+
+```{r, echo = TRUE}
+set.seed(42)
+# Skattning med n = 10
+y1 <- rnorm(n = 10, mean = 10, sd = 2)
+
+norm_mu_mle(x = y1)
+
+
+norm_sigma2_mle(x = y1)
+
+# Skattning med n = 10000
+y2 <- rnorm(n = 10000, mean = 10, sd = 2)
+
+norm_mu_mle(x = y2)
+
+norm_sigma2_mle(x = y2)
+```
+
+Desto större antal dragningar som görs, desto närmare kommer vi mu och sigma2, med respektive norm_mu_mle och norm_sigma2_mle. Detta följer av centralagärnsvärdessatsen som ger oss ett y som går mot normalfördelning och därmed tydligare väntevärde samt varians.
+
+#FRÅGA OM MAN KAN SÄGA ATT EN VEKTOR MED TAL GÅR MOT EN VISS FÖRDELNING
 
 
 
+## Uppgift 4 Samplingfördelningen för Bmle, MUmle och sigma2mle
 
 
+### a)
+
+```{r, echo = TRUE}
+
+beta1_mle <- c(1:2000)
+beta2_mle <- c(1:2000)
+mu1 <- c(1:2000)
+mu2 <- c(1:2000)
+sigma1 <- c(1:2000)
+sigma2 <- c(1:2000)
+
+i <- 1
+while (i <= 2000) {
+  x1 <- rgamma(n = 10, shape = 4, rate = 1)
+  x2 <- rgamma(n = 10000, shape = 4, rate = 1)
+  beta1_mle[i] <- gamma_beta_mle(x = x1, alpha = 4)
+  beta2_mle[i] <- gamma_beta_mle(x = x2, alpha = 4)
+  
+  y1 <- rnorm(n = 10, mean = 10, sd = 2)
+  y2 <- rnorm(n = 10000, mean = 10, sd = 2)
+  mu1[i] <- norm_mu_mle(x = y1)
+  mu2[i] <- norm_mu_mle(x = y2)
+  sigma1[i] <- norm_sigma2_mle(x = y1)
+  #sigma2[i] <- norm_sigma2_mle(x = y2) #FRÅGA: GÅR LÅNGSAMT. HOW TO MAKE IT GO FASTER??? CAN WE DO THIS BY NOT LOOPING? IF SO, HOW DO WE ACHIEVE THIS WITHOUT LOOPING???
+  i <- i + 1
+}
+
+hist(beta1_mle)
+```
 
 
+```{r, echo = TRUE}
+hist(beta1_mle)
+```
 
+```{r, echo = TRUE}
+hist(beta2_mle)
+```
 
+```{r, echo = TRUE}
+hist(mu1)
+```
 
+```{r, echo = TRUE}
+hist(mu2)
+```
+
+```{r, echo = TRUE}
+hist(sigma1)
+```
+
+```{r, echo = TRUE}
+hist(sigma2)
+```
+
+Precis som tidigare ser vi att ju fler dragningar så närmar sig histogrammen en normalfördelning vilket följer av den centrala gränsvärdessatsen.
+
+## Uppgift 5 Log-likelihoodfunktionen för betafördelning
+
+### a)
+
+```{r, echo = TRUE}
+llbeta <- function(par, x){
+  helpsum <- 0
+  i <- 1
+  while(i <= length(x)) {
+    helpsum <- helpsum + logb(par[1] + 1, x[i] + par[2])
+    i <- i + 1
+  }
+  return (helpsum + length(x)*logb(par[1], par[2]))
+}
+llbeta(par = c(2, 2), x = c(0.01, 0.5, 0.99))
+```
+
+#FRÅGA: OPTIM()?, MULTIPLICERAD MED -1???
+
+#relevant länk (med vår formel): https://stats.stackexchange.com/questions/137989/how-do-you-work-out-the-likelihood-function-for-the-beta-geometric-function
 
