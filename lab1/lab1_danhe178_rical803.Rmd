@@ -6,7 +6,6 @@ output: pdf_document
 ---
 
 
-
 ```{r setup, include=FALSE}
 
 library("Rlab")
@@ -14,11 +13,11 @@ library("manipulate")
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Uppgift 1 Simulering av normalfordelning
+# Uppgift 1 Simulering av normalfordelning
 
-### a) Visualisera fordelningarna i tva histogram. Visualisera fordelningens pdf i samma graf.
+## a) Visualisera fördelningarna i två histogram. Visualisera fordelningens pdf i samma graf.
 
-Nedan simuleras normalfordelningen med olika antalet dragningar.
+Nedan simuleras normalfördelningen med olika antal dragningar.
 
 ```{r }
 x1 <- rnorm(100, mean = 10, sd = 4)
@@ -41,16 +40,17 @@ yfit <- dnorm(xfit, mean = 10, sd = 4)
 lines(xfit, yfit, col="blue", lwd=2) 
 ```
 
-### b) Beskriv skillnaden mellan de olika graferna.
+## b) Beskriv skillnaden mellan de olika graferna.
 
 Vi kan tydligare se normalfordelningsformen om vi gor fler dragningar/simuleringar.
 
 
 #################################################
 
-## Uppgift 2 Simulera och visualisera andra fordelningar
 
-### a)Simulera och visualisera foljande fordelningar med 10000 dragningar fran varje fordelning samt fordelningens tathetsfunktioner.
+# Uppgift 2 Simulera och visualisera andra fordelningar
+
+## a) Simulera och visualisera foljande fordelningar med 10000 dragningar fran varje fordelning samt fordelningens tathetsfunktioner.
 
 ```{r }
 x1 <- rbern(10000, 0.2)
@@ -151,17 +151,18 @@ yfit <- dbeta(xfit, 10, 5, 0, log = FALSE)
 lines(xfit, yfit, col="blue", lwd=2) 
 ```
 
+
 ############################################# 
 
-## Uppgift 3 Relation mellan fordelningar
-### a) Simulera 1000 varden fran respektive fordelning och visualisera fordelningen i ett histogram tillsammans med fordelningens tathetsfunktionen.
 
+# Uppgift 3 Relation mellan fordelningar
+
+## a) Simulera 1000 varden fran respektive fordelning och visualisera fordelningen i ett histogram tillsammans med fordelningens tathetsfunktionen.
 
 ```{r }
 x1 <- rbinom(n = 1000, size = 10000, prob = 0.001)
 x2 <- rt(1000, 10000)
 ```
-
 
 ```{r, echo=TRUE}
 hist(x1, probability = TRUE) 
@@ -177,19 +178,19 @@ yfit <- dt(xfit, 10000)
 lines(xfit, yfit, col="blue", lwd=2) 
 ```
 
-### b) Ta reda pa (ex. via Wikipedia) vilken annan fordelning som respektive fordelning borjar konvergera mot.
+## b) Ta reda pa (ex. via Wikipedia) vilken annan fordelning som respektive fordelning borjar konvergera mot.
 
-Bade Binomialfordelningen och Student-t-fordelningen borjar konvergera mot en normalfordelning med my = 0. 
+Binomialfördelningen börjar konvergera mot Poissonfördelning och Student-t-fördelningen börjar konvergera mot en normalfördelning.
 
 
-### c) Simulera dragningar fran dessa fordelningar och jamfor resultatet med de resultat du fick i a).
+## c) Simulera dragningar fran dessa fordelningar och jamfor resultatet med de resultat du fick i a).
 
 ```{r }
 x1 <- rnorm(100, mean = 0, sd = 4)
 x2 <- rnorm(10000, mean = 0, sd = 4)
 ```
 
-I figurerna nedan visas resultatet av dragningarna som ett histogram tillsammans med tathetsfunktionen.
+I figurerna nedan visas resultatet av dragningarna som ett histogram tillsammans med täthetsfunktionen.
 
 ```{r, echo=FALSE}
 hist(x1, probability = TRUE) 
@@ -207,26 +208,26 @@ lines(xfit, yfit, col="blue", lwd=2)
 
 ######################################
 
-## Uppgift 4 Hiearkiska sannolikhetsfördelningar
+# Uppgift 4 Hiearkiska sannolikhetsfördelningar
 
-### Vi ska nu simulera en blandad sannolikhetsfördelning (mixture distribution). Börja att läsa in data-materialet faithful i R med data(faithful).
+## Vi ska nu simulera en blandad sannolikhetsfördelning (mixture distribution). Börja att läsa in data-materialet faithful i R med data(faithful).
 
-### a) Visualisera variabeln waiting i ett histogram.
+## a) Visualisera variabeln waiting i ett histogram.
 
 ```{r }
 data(faithful)
 hist(faithful$waiting, probability = TRUE)
 ```
 
-### b) Simulera 10000 från följande modell och visualisera fördelningen i ett histogram. Simulera först från X och sedan från Y . Sätt p = 0.3,  1 = 15, 1 = 3,  2 = 4 och 2 = 2. 
+## b) Simulera 10000 från följande modell och visualisera fördelningen i ett histogram. Simulera först från X och sedan från Y . Sätt p = 0.3,  1 = 15, 1 = 3,  2 = 4 och 2 = 2. 
 
-### Xi <- Bernoulli(p)
+Xi <- Bernoulli(p)
 
 ```{r, echo = TRUE}
 x1 <- rbern(10000, 0.3)
 y1 <- numeric(10000)
 for(i in 1:10000) {
-  y1[i] = x1[i] * rnorm(1, 53, 6) + (1-x1[i]) * rnorm(1, 81,8)
+  y1[i] <- x1[i] * rnorm(n = 1, mean = 15, sd = 3) + (1-x1[i]) * rnorm(n = 1, mean = 4, sd = 2)
 }
 ```
 
@@ -237,13 +238,25 @@ yfit <- dbern(xfit, 0.3, log = FALSE)
 lines(xfit, yfit, col="blue", lwd=2) 
 ```
 
+## c) 
+
+```{r, echo = TRUE}
+x1 <- rbern(10000, 0.3)
+y1 <- numeric(10000)
+for(i in 1:10000) {
+  y1[i] = x1[i] * rnorm(n = 1, mean = 53, sd = 6) + (1-x1[i]) * rnorm(n = 1, mean = 80, sd = 7)
+}
+```
+
+```{r, echo=TRUE}
+hist(y1, probability = TRUE) 
+```
+
 
 ###################################################
 
 
-## Uppgift 5 Analytisk sannolikhet och approximation med ”Monte Carlo” - metoder
-
-### 
+# Uppgift 5 Analytisk sannolikhet och approximation med ”Monte Carlo” - metoder
 
 ```{r, echo= TRUE}
 x1 <- rnorm(10000, 0, 1)
@@ -251,7 +264,7 @@ y1 <- rbinom(10000, 10, 0.1)
 ```
 
 
-### a)
+## a)
 ```{r, echo=TRUE}
 hist(y1, probability = TRUE) 
 xfit <- seq(0, 10, 1)   
@@ -259,30 +272,28 @@ yfit <- dbinom(xfit, 10, 0.1)
 lines(xfit, yfit, col="blue", lwd=2) 
 ```
 
-### b)
+## b)
 
-#### 1 P(X < 0)
+### 1 P(X < 0)
 ```{r, echo=TRUE}
 pnorm(0, mean = 0, sd = 1)
 ```
 
-#### 2 P( 1 < X < 1)
+### 2 P( 1 < X < 1)
 ```{r, echo=TRUE}
 pnorm(1, mean = 0, sd = 1) - pnorm(-1, mean = 0, sd = 1)
 ```
 
-#### 3 P(1.96 < X)
+### 3 P(1.96 < X)
 ```{r, echo=TRUE}
 1 - pnorm(1.96, mean = 0, sd = 1)
 ```
 
-#### 4 P(0 < Y < 10)
+### 4 P(0 < Y < 10)
 ```{r, echo=TRUE}
 pbinom(10, size = 10, prob = 0.1)  - pbinom(0.0, size = 10, prob = 0.1)
 ```
 
-
-##FEL
 #### 5 P(Y = 0)
 ```{r, echo=TRUE}
 pbinom(0.0, size = 10, prob = 0.1)
@@ -294,38 +305,38 @@ pbinom(10.0, size = 10, prob = 0.1) - pbinom(0.0, size = 10, prob = 0.1)
 ```
 
 
-### c)
+## c)
 
-#### 1 P(X < 0)
+### 1 P(X < 0)
 ```{r, echo=TRUE}
 x1 <- rnorm(10000, 0, 1)
 p = ecdf(x1)
 p(0.0)
 ```
 
-#### 2 P( 1 < X < 1)
+### 2 P( 1 < X < 1)
 ```{r, echo=TRUE}
 x2 <- rnorm(10000, 0, 1)
 p = ecdf(x2)
 p(1.0) - p(-1.0)
 ```
 
-#### 3 P(1.96 < X)
+### 3 P(1.96 < X)
 ```{r, echo=TRUE}
 x3 <- rnorm(10000, 0, 1)
 p = ecdf(x3)
 1 - p(1.96)
 ```
 
-#### 4 P(0 < Y < 10)
+### 4 P(0 < Y < 10)
 ```{r, echo=TRUE}
 y1 <- rbinom(10000, 10, 0.1)
 p = ecdf(y1)
 p(10.0) - p(0.0)
 ```
 
-##FEL
-#### 5 P(Y = 0)
+
+### 5 P(Y = 0)
 ```{r, echo=TRUE}
 y2 <- rbinom(10000, 10, 0.1)
 p = ecdf(y2)
@@ -340,51 +351,48 @@ p(10.0) - p(0.0)
 ```
 
 
-## Uppgift 6 Beräkna (icke-triviala) sannolikheter
+# Uppgift 6 Beräkna (icke-triviala) sannolikheter
 
 ## a)
 ### Förväntade antalet fel: Gamla systemet
 ```{r, echo=TRUE}
 old <- rbinom(10000, size = 337, prob = 0.1)
+hist(old, probability = TRUE) 
 evold <- mean(old)
 print(evold)
 
-hist(old, probability = TRUE) 
-xfit <- seq(0, 337, 1)   
-yfit <- dbinom(xfit, 337, 0.1)
-lines(xfit, yfit, col="blue", lwd=2) 
 ```
 ### Förväntade antalet fel: Nya systemet
 ```{r, echo=TRUE}
 newprob <- runif(10000, min = 0.02, max = 0.16)
 evnewprob <- mean(newprob)
 new <- rbinom(10000, size = 337, prob = evnewprob)
+hist(new, probability = TRUE) 
 evnew <- mean(new)
 print(evnew)
+
 ```
 
 ## b) 
-##P(färre fel i gamla systemet än nya) = intervallet [0.1, 0.16] / intervallet [0.02, 0.16] = 0.06/0.14 = 0.429
-
+P(färre fel i gamla systemet än nya) = intervallet [0.1, 0.16] / intervallet [0.02, 0.16] = 0.06/0.14 = 0.429
 
 ## c)
-
-## sannolikheten att du kommer få fler än 50 fel i gamla systemet
+### sannolikheten att du kommer få fler än 50 fel i gamla systemet
 ```{r, echo=TRUE}
 p <- ecdf(old)
 print(1-p(50))
 ```
 
-## sannolikheten att du kommer få fler än 50 fel i nya systemet
+### sannolikheten att du kommer få fler än 50 fel i nya systemet
 ```{r, echo=TRUE}
 p <- ecdf(new)
 print(1-p(50))
 ```
 
 
-### Uppgift 7 Monte Carlo metoder för integrering
+# Uppgift 7 Monte Carlo metoder för integrering
 
-##a)
+## a)
 
 ```{r, echo=TRUE}
 
@@ -412,21 +420,40 @@ plot(x, y)
 const <- 4 * z/n
 
 return(const)
+
 }
-
 ```
 
 ```{r, echo=TRUE}
-montecarlocalcpi(100)
+montecarlocalcef <- function(n) {
+  x <- runif(n, min = 0.0, max = 1.0)
+  y <- runif(n, min = 0.0, max = 1.0)
+
+  xfilter <- x[((x**2 + y**2)**(1/2))<=1]
+  yfilter <- y[((x**2 + y**2)**(1/2))<=1]
+
+  plot(xfilter, yfilter)
+  
+  z <- length(xfilter)
+  
+  const <- 4 * z/n
+  return(const)
+  
+}
+```
+
+
+```{r, echo=TRUE}
+montecarlocalcef(100)
 ```
 ```{r, echo=TRUE}
-montecarlocalcpi(10000)
+montecarlocalcef(10000)
 ```
 ```{r, echo=TRUE}
-#montecarlocalcpi(100000)
+montecarlocalcef(100000)
 ```
 ```{r, echo=TRUE}
-#montecarlocalcpi(1000000)
+montecarlocalcef(1000000)
 ```
 
 ### b) 
@@ -484,7 +511,7 @@ gammafunc <- function(n) {
 
 E[X] = size * prob = 10 * 0.2 = 2
 
-E[Y] = shape / rate = 2 / 2 = 1  
+E[Y] = shape / rate = 2 / 2 = 1   #RTK: alpha / beta alltså: 2 / (1/2) = 2 * 2 = 4
 
 
 ### b) 
