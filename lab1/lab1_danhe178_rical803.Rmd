@@ -426,17 +426,15 @@ montecarlocalcef(100000)
 montecarlocalcef(1000000)
 ```
 
-### b) 
+## b) 
 Vi försöker approximera pi, vilket verkar gå ganska väl både sett till talet man får fram samt den grafiska kvartscirkeln.
 
 
-### c) 
-Approximationen blir exaktare, men beräkningen tar mycket längre tid.
+## c) 
+Approximationen blir exaktare, men beräkningen tar längre tid.
 
-### d) 
-
+## d) 
 ```{r, echo=TRUE}
-
 x2 <- function(n) {
   return(n*n)
 }
@@ -444,8 +442,7 @@ integrate(x2, lower = 0, upper = 2)
 ```
 
 
-### e)
-
+## e)
 ```{r, echo=TRUE}
 
 montecarlocalc <- function(n) {
@@ -453,38 +450,36 @@ montecarlocalc <- function(n) {
 x <- runif(n, min = 0.0, max = 2.0)
 y <- runif(n, min = 0.0, max = 4.0)
 
-plot(x,y)
 
-return(mean(y < x**2)*8)
+return(mean(y < x**2)*2*4)
 }
 
 montecarlocalc(100000)
 ```
 
 
-### Uppgift 8 Stora talens lag
+# Uppgift 8 Stora talens lag
 
 ```{r, echo=TRUE}
-
 binomfunc <- function(n) {
   x <- rbinom(n, size = 10, prob = 0.2)
   return(x)
 }
 
 gammafunc <- function(n) {
-  y <- rgamma(n, shape = 2, rate = 2)
+  y <- rgamma(n, shape = 2,  scale = 2)
   return(y)
 }
 ```
 
-### a)
+## a)
 
 E[X] = size * prob = 10 * 0.2 = 2
 
-E[Y] = shape / rate = 2 / 2 = 1   #RTK: alpha / beta alltså: 2 / (1/2) = 2 * 2 = 4
+E[Y] = shape / rate = shape / (1/scale) = shape * scale = 2 * 2 = 4  
 
 
-### b) 
+## b) 
 
 ```{r, echo = TRUE}
 binomvector <- c()
@@ -536,9 +531,7 @@ plot(draws, gammavector, type = "l")
 ```
 
 
-
-
-### Uppgift 9 Väntevärde och varians
+# Uppgift 9 Väntevärde och varians
 
 ```{r, echo = TRUE}
 
@@ -555,17 +548,15 @@ poissonfunc <- function(n) {
 
 
 ## a)
+exponential distribution:
 E[X] = 1/rate = 1/10 = 0.1
-
 Var[X] = 1/rate² = 1/100 = 0.01
 
-E[Y] = lambda = 3
-
-Var[Y] = lambda = 3
+poisson distribution:
+E[Y] = Var[Y] = lambda = 3
 
 
 ## b)
-
 ```{r, echo = TRUE}
 # Beräknar E(X)
 mean(exponentialfunc(10000))
@@ -622,10 +613,7 @@ var(2*x-5)
 var(x+y)
 ```
 
-
-
-### Uppgift 10 Centrala gränsvärdessatsen
-
+# Uppgift 10 Centrala gränsvärdessatsen
 ```{r, echo = TRUE}
 poissonfunc <- function(n) {
   x <- rpois(n, lambda = 5)
@@ -646,39 +634,23 @@ binomfunc <- function(n) {
 
 
 ## a)
-
 ```{r, echo = TRUE}
-
 x <- poissonfunc(1000)
 hist(x, probability = TRUE) 
-xfit <- seq(-5, 15, 1)   
-yfit <- dpois(xfit, lambda = 5)
-lines(xfit, yfit, col="blue", lwd=2) 
 ```
 
 ```{r, echo = TRUE}
-
 y <- exponentialfunc(1000)
 hist(y, probability = TRUE) 
-xfit <- seq(0, 10, 0.1)   
-yfit <- dexp(xfit, 1)
-lines(xfit, yfit, col="blue", lwd=2) 
 ```
 
 ```{r, echo = TRUE}
-
 z <- binomfunc(1000)
 hist(z, probability = TRUE) 
-xfit <- seq(0, 3, 1)   
-yfit <- dbinom(xfit, size = 10, prob = 0.01)
-lines(xfit, yfit, col="blue", lwd=2) 
 ```
 
-
 ## b)
-
 ```{r, echo = TRUE}
-
 poisvector <- c()
 expvector <- c()
 i = 1
@@ -690,7 +662,6 @@ while (i < 1000) {
 ```
 
 ```{r, echo = TRUE}
-
 hist(poisvector, probability = TRUE) 
 ```
 
@@ -698,96 +669,71 @@ hist(poisvector, probability = TRUE)
 hist(expvector, probability = TRUE) 
 ```
 
-
 ## c)
 
-#Poisson
 ```{r, echo = TRUE}
 
-x <- poissonfunc(30)
-hist(x, probability = TRUE) 
-xfit <- seq(-5, 15, 1)   
-yfit <- dpois(xfit, lambda = 5)
-lines(xfit, yfit, col="blue", lwd=2) 
+calculatemeans <- function(n, func) {
+  vector <- c()
+  i = 1
+  while (i < 1000) {
+    vector <- c(vector, mean(func(n)))
+    i <- i + 1
+  }
+  return(vector)
+}
+```
+
+###Poisson
+```{r, echo = TRUE}
+func <- poissonfunc
+hist(calculatemeans(30, func), probability = TRUE) 
 ```
 
 ```{r, echo = TRUE}
-
-x <- poissonfunc(100)
-hist(x, probability = TRUE) 
-xfit <- seq(-5, 15, 1)   
-yfit <- dpois(xfit, lambda = 5)
-lines(xfit, yfit, col="blue", lwd=2) 
+func <- poissonfunc
+hist(calculatemeans(100, func), probability = TRUE) 
 ```
 
 ```{r, echo = TRUE}
-
-x <- poissonfunc(1000)
-hist(x, probability = TRUE) 
-xfit <- seq(-5, 15, 1)   
-yfit <- dpois(xfit, lambda = 5)
-lines(xfit, yfit, col="blue", lwd=2) 
+func <- poissonfunc
+hist(calculatemeans(1000, func), probability = TRUE) 
 ```
 
-#Exponential
-```{r, echo = TRUE}
 
-y <- exponentialfunc(30)
-hist(y, probability = TRUE) 
-xfit <- seq(0, 10, 0.1)   
-yfit <- dexp(xfit, 1)
-lines(xfit, yfit, col="blue", lwd=2) 
+###Exponential
+```{r, echo = TRUE}
+func <- exponentialfunc
+hist(calculatemeans(30, func), probability = TRUE) 
 ```
 
 ```{r, echo = TRUE}
-
-y <- exponentialfunc(100)
-hist(y, probability = TRUE) 
-xfit <- seq(0, 10, 0.1)   
-yfit <- dexp(xfit, 1)
-lines(xfit, yfit, col="blue", lwd=2) 
+func <- exponentialfunc
+hist(calculatemeans(100, func), probability = TRUE) 
 ```
 
 ```{r, echo = TRUE}
-
-y <- exponentialfunc(1000)
-hist(y, probability = TRUE) 
-xfit <- seq(0, 10, 0.1)   
-yfit <- dexp(xfit, 1)
-lines(xfit, yfit, col="blue", lwd=2) 
+func <- exponentialfunc
+hist(calculatemeans(1000, func), probability = TRUE) 
 ```
 
-
-#Binomial
+###Binomial
 ```{r, echo = TRUE}
-
-z <- binomfunc(30)
-hist(z, probability = TRUE) 
-xfit <- seq(0, 3, 1)   
-yfit <- dbinom(xfit, size = 10, prob = 0.01)
-lines(xfit, yfit, col="blue", lwd=2) 
+func <- binomfunc
+hist(calculatemeans(30, func), probability = TRUE) 
 ```
 
 ```{r, echo = TRUE}
-
-z <- binomfunc(100)
-hist(z, probability = TRUE) 
-xfit <- seq(0, 3, 1)   
-yfit <- dbinom(xfit, size = 10, prob = 0.01)
-lines(xfit, yfit, col="blue", lwd=2) 
+func <- binomfunc
+hist(calculatemeans(100, func), probability = TRUE) 
 ```
 
 ```{r, echo = TRUE}
-
-z <- binomfunc(1000)
-hist(z, probability = TRUE) 
-xfit <- seq(-2, 2, 1)   
-yfit <- dbinom(xfit, size = 10, prob = 0.01)
-lines(xfit, yfit, col="blue", lwd=2) 
+func <- binomfunc
+hist(calculatemeans(1000, func), probability = TRUE) 
 ```
 
-
-Medelvärdena konvergerar mot en normalfördelning. Då väntevärdena för Y och Z är nära 0 får vi att histogrammen för de bara visar ena halvan av en normalfördelning och inte på ett lika tydligt sätt närmar sig normalfördelningen som X gör. Därmed ser det ut som att X konvergerar snabbast mot normalfördelningen.
+Medelvärdena konvergerar mot en normalfördelning. Då väntevärdena för Y och Z är nära 0 ser det i början ut som att histogrammen för dem bara visar ena halvan av en normalfördelning, se uppgift 10 a). Därmed ser det ut som att X konvergerar snabbast mot normalfördelningen.
 
 
 
