@@ -266,10 +266,17 @@ y1 <- rbinom(10000, 10, 0.1)
 
 ## a)
 ```{r, echo=TRUE}
+#P(Y=0 enligt täthetsfunktionen)
+dbinom(0, size = 10, prob = 0.1)
+
+#Simulera 10000 dragningar från Y och beräkna andelen dragningar där y = 0
 hist(y1, probability = TRUE) 
 xfit <- seq(0, 10, 1)   
 yfit <- dbinom(xfit, 10, 0.1)
 lines(xfit, yfit, col="blue", lwd=2) 
+
+length(y1[y1 == 0])/10000
+
 ```
 
 ## b)
@@ -279,7 +286,7 @@ lines(xfit, yfit, col="blue", lwd=2)
 pnorm(0, mean = 0, sd = 1)
 ```
 
-### 2 P( 1 < X < 1)
+### 2 P( -1 < X < 1)
 ```{r, echo=TRUE}
 pnorm(1, mean = 0, sd = 1) - pnorm(-1, mean = 0, sd = 1)
 ```
@@ -289,9 +296,9 @@ pnorm(1, mean = 0, sd = 1) - pnorm(-1, mean = 0, sd = 1)
 1 - pnorm(1.96, mean = 0, sd = 1)
 ```
 
-### 4 P(0 < Y < 10)
+### 4 P(0 < Y < 10) <=> P(1 <= Y <= 9) (p g a diskret fördelning)
 ```{r, echo=TRUE}
-pbinom(10, size = 10, prob = 0.1)  - pbinom(0.0, size = 10, prob = 0.1)
+pbinom(9, size = 10, prob = 0.1)  - pbinom(1, size = 10, prob = 0.1)
 ```
 
 #### 5 P(Y = 0)

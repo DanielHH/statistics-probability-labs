@@ -12,6 +12,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Uppgift 1 Likelihoodfunktioner
 
+```{r, echo = TRUE}
+set.seed(4711)
+x1 <- rgamma(n = 10, shape = 4, scale = 1)
+x2 <- rgamma(n = 100, shape = 4, scale = 1)
+```
+
 ## a)
 
 ```{r, echo = TRUE}
@@ -22,12 +28,9 @@ llgamma <- function(x, alpha, beta) {
 
 ## b)
 ```{r, echo = TRUE}
-set.seed(4711) #FRÅGA OM VI SKA ANVÄNDA SEED ELLER EJ
-x1 <- rgamma(n = 10, shape = 4, scale = 1)
-x2 <- rgamma(n = 100, shape = 4, scale = 1)
 
-tendraws <- c()
-hundreddraws <- c()
+beta_tendraws <- c()
+beta_hundreddraws <- c()
 steps <- c()
 
 i = 0.01
@@ -75,11 +78,9 @@ Det varierar vilket av de upprepade värdena för beta som ger maximala värdet 
 ## c)
 
 ```{r, echo = TRUE}
-x1 <- rgamma(n = 10, shape = 4, scale = 1)
-x2 <- rgamma(n = 100, shape = 4, scale = 1)
 
-tendraws <- c()
-hundreddraws <- c()
+alpha_tendraws <- c()
+alpha_hundreddraws <- c()
 steps <- c()
 
 i = 0.01
@@ -106,7 +107,7 @@ plot(steps, hundreddraws)
 # Undersöker och returnerar vilket alphavärde som loglikelyhoodfunktionen får sitt maxvärde på
 findMaxIndex <- function(vect) {
   i <- NULL
-  currentMax <- -999999
+  currentMax <- -Inf
   x <- 1
   while (x < length(vect)) {
     if (vect[x] > currentMax) {
@@ -125,18 +126,56 @@ findMaxIndex(hundreddraws)
 Det varierar vilket av de upprepade värdena för alpha som ger maximala värdet på loglikelihoodfunktionen, men ökar man antalet dragningar går denna siffra mot 4.0.
 
 
-## d) FRÅGA PÅ LABBEN!
+## d) 
+### Härledning av log-likelihood för normalfördelning:
+![Härledning av log-likelihood för normalfördelning del 1](harledning_1d_1.jpg)
+![Härledning av log-likelihood för normalfördelning del 2](harledning_1d_2.jpg)
+
+```{r, echo = TRUE}
+```
 
 ```{r, echo = TRUE}
 llnormal <- function(x, mu, sigma2) {
-  
+  xsum <- sum((x - mu)**2)
+  return(-length(x)/2*log(2*pi) - length(x)/2 * log(sigma2) - 1/(2 * sigma2) * xsum)
 }
+
+llnormal(x = x1, mu = 2, sigma2 = 1) #Fråga om okej
 
 ```
 
 
 ## e) 
+```{r, echo = TRUE}
+mu_tendraws <- c()
+mu_hundreddraws <- c()
+steps <- c()
 
+i = 0.01
+while(i <= 10) {
+  tendraws <- c(tendraws, llnormal(x1, mu = i, sigma2 = 1))
+  hundreddraws <- c(hundreddraws, llnormal(x2, mu = i, sigma2 = 1))
+  steps <- c(steps, i)
+  i <- i + 0.01
+}
+
+```
+
+```{r, echo = TRUE}
+# plot for ten draws
+plot(steps, tendraws)
+```
+
+```{r, echo = TRUE}
+# plot for hundred draws
+plot(steps, hundreddraws)
+```
+```{r, echo = TRUE}
+mu_max <- mu_tendraws[findMaxIndex(mu_tendraws)]
+alpha_max <- alpha_tendraws[findMaxIndex(alpha_tendraws)]
+beta_max <- beta_tendraws[findMaxIndex(beta_tendraws)]
+dgamma(x1, )
+```
 
 ### Uppgift 2 Punktskattning med MLE i en gammafördelning
 ```{r, echo = TRUE}
@@ -168,7 +207,7 @@ norm_sigma2_mle <- function(x) {
   j <- 1
   while(j <= length(x)) {
     sumhelp <- sumhelp + (x[j] - norm_mu_mle(x))**2
-    j <- j + 1
+    j <- j + 1 #använd funktion sum
   }
   return(1/length(x)*sumhelp)
 }
@@ -207,7 +246,7 @@ norm_sigma2_mle(x = y2)
 
 Desto större antal dragningar som görs, desto närmare kommer vi mu och sigma2, med respektive norm_mu_mle och norm_sigma2_mle. Detta följer av centralagärnsvärdessatsen som ger oss ett y som går mot normalfördelning och därmed tydligare väntevärde samt varians.
 
-#FRÅGA OM MAN KAN SÄGA ATT EN VEKTOR MED TAL GÅR MOT EN VISS FÖRDELNING
+
 
 
 
@@ -273,7 +312,7 @@ Precis som tidigare ser vi att ju fler dragningar så närmar sig histogrammen e
 
 ## Uppgift 5 Log-likelihoodfunktionen för betafördelning
 
-### a)
+### a) #FRÅGA: Vadå gamma?
 
 ```{r, echo = TRUE}
 llbeta <- function(par, x){
@@ -283,7 +322,7 @@ llbeta <- function(par, x){
     helpsum <- helpsum + logb(par[1] + 1, x[i] + par[2])
     i <- i + 1
   }
-  return (helpsum + length(x)*logb(par[1], par[2]))
+  return (helpsum + length(x)*logb(par[1], par[2])) #logb är fel. ANvänd formeln som är på betadistributionens wikisida, på PDF.
 }
 llbeta(par = c(2, 2), x = c(0.01, 0.5, 0.99))
 ```
