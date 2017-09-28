@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-### Uppgift 1 Likelihoodfunktioner
+# Uppgift 1 Likelihoodfunktioner
 
 ```{r, echo = TRUE}
 set.seed(4711)
@@ -28,15 +28,14 @@ llgamma <- function(x, alpha, beta) {
 
 ## b)
 ```{r, echo = TRUE}
-
 beta_tendraws <- c()
 beta_hundreddraws <- c()
 steps <- c()
 
 i = 0.01
 while(i <= 3) {
-  tendraws <- c(tendraws, llgamma(x1, alpha = 4, beta = i))
-  hundreddraws <- c(hundreddraws, llgamma(x2, alpha = 4, beta = i))
+  beta_tendraws <- c(beta_tendraws, llgamma(x1, alpha = 4, beta = i))
+  beta_hundreddraws <- c(beta_hundreddraws, llgamma(x2, alpha = 4, beta = i))
   steps <- c(steps, i)
   i <- i + 0.01
 }
@@ -44,17 +43,16 @@ while(i <= 3) {
 
 ```{r, echo = TRUE}
 # plot for ten draws
-plot(steps, tendraws)
+plot(steps, beta_tendraws)
 ```
 
 ```{r, echo = TRUE}
 # plot for hundred draws
-plot(steps, hundreddraws)
+plot(steps, beta_hundreddraws)
 ```
 
 ```{r, echo = TRUE}
-# Undersöker och returnerar vilket betavärde som loglikelyhoodfunktionen får sitt maxvärde på
-findMaxIndex <- function(vect) {
+findMax <- function(vect) {
   i <- NULL
   currentMax <- -Inf
   x <- 1
@@ -67,9 +65,12 @@ findMaxIndex <- function(vect) {
   }
   return(i/100)
 }
+```
 
-findMaxIndex(tendraws)
-findMaxIndex(hundreddraws)
+```{r, echo = TRUE}
+# Undersöker och returnerar vilket betavärde som loglikelihoodfunktionen får sitt maxvärde på
+findMax(beta_tendraws)
+findMax(beta_hundreddraws)
 ```
 
 Det varierar vilket av de upprepade värdena för beta som ger maximala värdet på loglikelihoodfunktionen, men ökar man antalet dragningar går denna siffra mot 1.0.
@@ -85,8 +86,8 @@ steps <- c()
 
 i = 0.01
 while(i <= 10) {
-  tendraws <- c(tendraws, llgamma(x1, alpha = i, beta = 1))
-  hundreddraws <- c(hundreddraws, llgamma(x2, alpha = i, beta = 1))
+  alpha_tendraws <- c(alpha_tendraws, llgamma(x1, alpha = i, beta = 1))
+  alpha_hundreddraws <- c(alpha_hundreddraws, llgamma(x2, alpha = i, beta = 1))
   steps <- c(steps, i)
   i <- i + 0.01
 }
@@ -95,32 +96,19 @@ while(i <= 10) {
 
 ```{r, echo = TRUE}
 # plot for ten draws
-plot(steps, tendraws)
+plot(steps, alpha_tendraws)
 ```
 
 ```{r, echo = TRUE}
 # plot for hundred draws
-plot(steps, hundreddraws)
+plot(steps, alpha_hundreddraws)
 ```
 
 ```{r, echo = TRUE}
-# Undersöker och returnerar vilket alphavärde som loglikelyhoodfunktionen får sitt maxvärde på
-findMaxIndex <- function(vect) {
-  i <- NULL
-  currentMax <- -Inf
-  x <- 1
-  while (x < length(vect)) {
-    if (vect[x] > currentMax) {
-      currentMax <- vect[x]
-      i <- x
-    }
-    x <- x + 1
-  }
-  return(i/100)
-}
+# Undersöker och returnerar vilket alphavärde som loglikelihoodfunktionen får sitt maxvärde på
 
-findMaxIndex(tendraws)
-findMaxIndex(hundreddraws)
+findMax(alpha_tendraws)
+findMax(alpha_hundreddraws)
 ```
 
 Det varierar vilket av de upprepade värdena för alpha som ger maximala värdet på loglikelihoodfunktionen, men ökar man antalet dragningar går denna siffra mot 4.0.
@@ -153,8 +141,8 @@ steps <- c()
 
 i = 0.01
 while(i <= 10) {
-  tendraws <- c(tendraws, llnormal(x1, mu = i, sigma2 = 1))
-  hundreddraws <- c(hundreddraws, llnormal(x2, mu = i, sigma2 = 1))
+  mu_tendraws <- c(mu_tendraws, llnormal(x1, mu = i, sigma2 = 1))
+  mu_hundreddraws <- c(mu_hundreddraws, llnormal(x2, mu = i, sigma2 = 1))
   steps <- c(steps, i)
   i <- i + 0.01
 }
@@ -163,19 +151,40 @@ while(i <= 10) {
 
 ```{r, echo = TRUE}
 # plot for ten draws
-plot(steps, tendraws)
+plot(steps, mu_tendraws)
 ```
 
 ```{r, echo = TRUE}
 # plot for hundred draws
-plot(steps, hundreddraws)
+plot(steps, mu_hundreddraws)
 ```
+
 ```{r, echo = TRUE}
-mu_max <- mu_tendraws[findMaxIndex(mu_tendraws)]
-alpha_max <- alpha_tendraws[findMaxIndex(alpha_tendraws)]
-beta_max <- beta_tendraws[findMaxIndex(beta_tendraws)]
-dgamma(x1, )
+mu_max_ten <- findMax(mu_tendraws)
+alpha_max_ten <- findMax(alpha_tendraws)
+beta_max_ten <- findMax(beta_tendraws)
+hist(x1, probability = TRUE)
+xfit <- seq(0, 10, 0.01)
+yfitgamma <- dgamma(xfit, shape = alpha_max_ten, scale = beta_max_ten)
+lines(xfit, yfitgamma, col="blue", lwd=2) 
+yfitnorm <- dnorm(xfit, mean = mu_max_ten, sd = 1)
+lines(xfit, yfitnorm, col="red", lwd = 2)
 ```
+
+```{r, echo = TRUE}
+mu_max_hundred <- findMax(mu_hundreddraws)
+alpha_max_hundred <- findMax(alpha_hundreddraws)
+beta_max_hundred <- findMax(beta_hundreddraws)
+hist(x2, probability = TRUE)
+xfit <- seq(0, 10, 0.01)
+yfitgamma <- dgamma(xfit, shape = alpha_max_hundred, scale = beta_max_hundred)
+lines(xfit, yfitgamma, col="blue", lwd=2) 
+yfitnorm <- dnorm(xfit, mean = mu_max_hundred, sd = 1)
+lines(xfit, yfitnorm, col="red", lwd = 2)
+```
+
+Gammafördelningen tycks passa datamaterialet bäst.
+
 
 ### Uppgift 2 Punktskattning med MLE i en gammafördelning
 ```{r, echo = TRUE}
