@@ -295,27 +295,56 @@ hist(sigma1)
 ```{r, echo = TRUE}
 hist(sigma2)
 ```
-
 Precis som tidigare ser vi att ju fler dragningar så närmar sig histogrammen en normalfördelning vilket följer av den centrala gränsvärdessatsen.
 
-## Uppgift 5 Log-likelihoodfunktionen för betafördelning
 
-### a) #FRÅGA: Vadå gamma?
+# Uppgift 5 Log-likelihoodfunktionen för betafördelning
+## a) 
+
+![Härledning av log-likelihood för betafördelning](harledning_5a.jpg)
 
 ```{r, echo = TRUE}
 llbeta <- function(par, x){
-  helpsum <- 0
-  i <- 1
-  while(i <= length(x)) {
-    helpsum <- helpsum + logb(par[1] + 1, x[i] + par[2])
-    i <- i + 1
-  }
-  return (helpsum + length(x)*logb(par[1], par[2])) #logb är fel. ANvänd formeln som är på betadistributionens wikisida, på PDF.
+  sum1 <- (par[1]-1)*sum(log(x))
+  sum2 <- (par[2]-1)*sum(log(1-x))
+  sum3 <- length(x)*log(gamma(par[1])*gamma(par[2])/gamma(par[1] + par[2]))
+  return((sum1 + sum2 - sum3)*-1) # <- Varför multiplicera med -1??
 }
 llbeta(par = c(2, 2), x = c(0.01, 0.5, 0.99))
 ```
 
-#FRÅGA: OPTIM()?, MULTIPLICERAD MED -1???
+## b)
+```{r, echo = TRUE}
+x3 <- rbeta(100, 0.2, 2)
+hist(x3)
+```
 
-#relevant länk (med vår formel): https://stats.stackexchange.com/questions/137989/how-do-you-work-out-the-likelihood-function-for-the-beta-geometric-function
+## c)
+```{r, echo = TRUE}
+opt_res <- optim(par= c(0.2, 2), fn = llbeta, x=x3, upper=Inf,method ="L-BFGS-B", lower = .Machine$double.eps)
+opt_res$par
+```
+
+## d)
+```{r, echo = TRUE}
+alpha_mle <- c(1:2000)
+beta_mle <- c(1:2000)
+i <- 1
+while(i <= 2000) {
+  x3 <- rbeta(100, 0.2, 2)
+  opt_res <- optim(par= c(0.2, 2), fn = llbeta, x=x3, upper=Inf,method ="L-BFGS-B", lower = .Machine$double.eps)
+  alpha_mle[i] <- opt_res$par[1]
+  beta_mle[i] <- opt_res$par[2]
+  i <- i + 1
+}
+```
+
+```{r, echo = TRUE}
+hist(alpha_mle)
+```
+
+```{r, echo = TRUE}
+hist(beta_mle)
+```
+
 
