@@ -186,42 +186,31 @@ lines(xfit, yfitnorm, col="red", lwd = 2)
 Gammafördelningen tycks passa datamaterialet bäst.
 
 
-### Uppgift 2 Punktskattning med MLE i en gammafördelning
+# Uppgift 2 Punktskattning med MLE i en gammafördelning
 ```{r, echo = TRUE}
 gamma_beta_mle <- function(x, alpha) {
   return(length(x)*alpha*1/sum(x))
 }
-x1 <- rgamma(n = 10, shape = 4, scale = 1)
-x2 <- rgamma(n = 100, shape = 4, scale = 1)
 gamma_beta_mle(x1, 2)
 gamma_beta_mle(x2, 2)
 ```
-
 Vi testade att öka antalet dragningar och drar slutsatsen att estimatet går mot 0.5
 
 
-
-### Uppgift 3 Punktskattning med MLE i en normalfördelning
-
-
+# Uppgift 3 Punktskattning med MLE i en normalfördelning
 ## a)
-
 ```{r, echo = TRUE}
 norm_mu_mle <- function(x) {
-  return(1/length(x)*sum(x))
+  return(sum(x)/length(x))
 }
+
 
 norm_sigma2_mle <- function(x) {
-  sumhelp <- 0
-  j <- 1
-  while(j <= length(x)) {
-    sumhelp <- sumhelp + (x[j] - norm_mu_mle(x))**2
-    j <- j + 1 #använd funktion sum
-  }
-  return(1/length(x)*sumhelp)
+  mean_x <- norm_mu_mle(x)
+  sumhelp <- sum((x - mean_x)**2)
+  return(sumhelp/length(x))
 }
 ```
-
 
 ```{r, echo = TRUE}
 test_x <- 1:10
@@ -234,7 +223,6 @@ norm_sigma2_mle(x = test_x)
 
 
 ## b)
-
 ```{r, echo = TRUE}
 set.seed(42)
 # Skattning med n = 10
@@ -252,18 +240,11 @@ norm_mu_mle(x = y2)
 
 norm_sigma2_mle(x = y2)
 ```
-
 Desto större antal dragningar som görs, desto närmare kommer vi mu och sigma2, med respektive norm_mu_mle och norm_sigma2_mle. Detta följer av centralagärnsvärdessatsen som ger oss ett y som går mot normalfördelning och därmed tydligare väntevärde samt varians.
 
 
-
-
-
-## Uppgift 4 Samplingfördelningen för Bmle, MUmle och sigma2mle
-
-
-### a)
-
+# Uppgift 4 Samplingfördelningen för Bmle, MUmle och sigma2mle
+## a)
 ```{r, echo = TRUE}
 
 beta1_mle <- c(1:2000)
@@ -285,13 +266,11 @@ while (i <= 2000) {
   mu1[i] <- norm_mu_mle(x = y1)
   mu2[i] <- norm_mu_mle(x = y2)
   sigma1[i] <- norm_sigma2_mle(x = y1)
-  #sigma2[i] <- norm_sigma2_mle(x = y2) #FRÅGA: GÅR LÅNGSAMT. HOW TO MAKE IT GO FASTER??? CAN WE DO THIS BY NOT LOOPING? IF SO, HOW DO WE ACHIEVE THIS WITHOUT LOOPING???
+  sigma2[i] <- norm_sigma2_mle(x = y2) 
   i <- i + 1
 }
 
-hist(beta1_mle)
 ```
-
 
 ```{r, echo = TRUE}
 hist(beta1_mle)
