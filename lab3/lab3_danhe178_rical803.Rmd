@@ -1,0 +1,60 @@
+---
+title: "lab3_danhe178_rical803"
+author: "Daniel Herzegh & Richard Friberg"
+date: "2017-10-11"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Uppgift 1 Visualisera posteriorn
+
+## a)
+```{r, echo = TRUE}
+
+#prior for Mu
+xfit <- seq(-5, 15, 1)
+priorMu <- dt(xfit, df = 1)
+plot(xfit, priorMu)
+```
+
+## b)
+```{r, echo = TRUE}
+
+data <- c(11.3710, 9.4353, 10.3631, 10.6329, 10.4043, 9.8939, 11.5115)
+hist(xlim = range(-5, 15), x = data)
+
+```
+
+## c)
+```{r, echo = TRUE}
+normal_log_likelihood <- function(mu, data, sigma2 = 1) {
+  xsum <- sum((data - mu)**2)
+  return(-length(data)/2*log(2*pi) - length(data)/2 * log(sigma2) - 1/(2 * sigma2) * xsum)
+}
+
+llik <- normal_log_likelihood(5, data)
+round(llik, 1)
+```
+
+```{r, echo = TRUE}
+#likelihood för normalfördelning
+normal_likelihood <- function(mu, data, sigma2 = 1) {
+  return((2*pi*sigma2)**(-length(data)/2)*exp(-(1/(2*sigma2))*sum((data-mu)**2)))
+}
+
+xfit <- seq(-5, 15, 1)
+i <- 1
+yfit <- c(xfit)
+while(i < length(xfit)) {
+ yfit[i] <- normal_likelihood(xfit[i], data)
+ i <- i + 1
+}
+
+plot(xfit, yfit)
+
+```
+
+
