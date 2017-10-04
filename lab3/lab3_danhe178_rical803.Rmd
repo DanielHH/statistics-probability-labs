@@ -15,9 +15,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, echo = TRUE}
 
 #prior for Mu
-xfit <- seq(-5, 15, 1)
+xfit <- seq(-5, 15, 0.01)
 priorMu <- dt(xfit, df = 1)
-plot(xfit, priorMu)
+plot(xfit, priorMu, type = 'l', lwd = 3, col = "blue")
 ```
 
 ## b)
@@ -35,26 +35,98 @@ normal_log_likelihood <- function(mu, data, sigma2 = 1) {
   return(-length(data)/2*log(2*pi) - length(data)/2 * log(sigma2) - 1/(2 * sigma2) * xsum)
 }
 
-llik <- normal_log_likelihood(5, data)
-round(llik, 1)
-```
-
-```{r, echo = TRUE}
-#likelihood för normalfördelning
-normal_likelihood <- function(mu, data, sigma2 = 1) {
-  return((2*pi*sigma2)**(-length(data)/2)*exp(-(1/(2*sigma2))*sum((data-mu)**2)))
-}
-
-xfit <- seq(-5, 15, 1)
+xfit <- seq(-5, 15, 0.01)
 i <- 1
 yfit <- c(xfit)
-while(i < length(xfit)) {
- yfit[i] <- normal_likelihood(xfit[i], data)
+while(i <= length(xfit)) {
+ yfit[i] <- normal_log_likelihood(xfit[i], data)
  i <- i + 1
 }
 
-plot(xfit, yfit)
+likelihoodplot <- plot(xfit, yfit, type = 'l', lwd = 3, col = "blue")
+```
+
+## d) 
+
+
+## e)
+```{r, echo = TRUE}
+#posterior
+xfit <- seq(-5, 15, 0.01)
+posterior <- yfit + log(priorMu)
+plot(xfit, posterior, type = 'l', lwd = 3, col = "red")
 
 ```
+
+
+# Uppgift 2 Produkt A eller B?
+
+## a)
+Alpha = antal personer vi tror kommer gilla vår produkt 
+Beta = antal personer vi tror kommer ogilla vår produkt 
+
+Vi väljer dessa parametrar eftersom betafördelningen är en fördelning av sannolikheter. Desto mer data man har desto säkrare kan man vara på inom vilket intervall som produkten sannolikt är omtyckt på. Eftersom den eftersökta sannolikheten är på antal gillningar sätter vi alpha som detta med hänsyn till hur betafördelningen beräknar medelvärdet (mean = alpha / (alpha + beta)).
+
+## b)
+```{r, echo = TRUE}
+# Prior för produkt A
+x <- seq(0, 1, 0.001)
+A_beta <- dbeta(x, 7, 3)
+plot(x, A_beta, type = 'l', lwd = 3, col = "green")
+```
+
+```{r, echo = TRUE}
+# Prior för produkt B
+x <- seq(0, 1, 0.001)
+B_beta <- dbeta(x, 2, 8)
+plot(x, B_beta, type = 'l', lwd = 3, col = "red")
+```
+
+## c)
+### Posterior för produkt A:
+A = Beta(7 + 8, 3 + 5) = Beta(15, 8)
+
+E[A] = 15/(15+8) = 15/23
+
+### Posterior för produkt B:
+B = Beta(2 + 1, 8 + 2) = Beta(3, 10)
+
+E[B] = 3/(3+10) = 3/13
+
+### Vilken produkt har den högsta förväntade proportionen intresserade?
+
+Svar: Produkt A eftersom 15/23 > 3>13
+
+
+## d)
+### MAP-skattning för produkt A (m h a "mode"):
+(15-1)/(15+8-2) = 14/21 = 2/3
+
+### MAP-skattning för produkt B (m h a "mode"):
+(3-1)/(3+10-2) = 2/11
+
+
+## e)
+
+### nedanstående är nog fel
+```{r, echo = TRUE}
+post_A <- dbeta(x, 15, 8)
+hist(post_A)
+
+```
+
+
+
+```{r, echo = TRUE}
+# p: probability vector (ex. 0:1), x: number of successes, n: draws 
+binom_likelihood <- function(p, x, n) {
+ return(choose(n, x)*p**x*(1-p)**(n-x)) 
+}
+
+```
+
+
+
+
 
 
