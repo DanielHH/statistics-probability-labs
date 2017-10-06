@@ -191,10 +191,10 @@ Gammafördelningen tycks passa datamaterialet bäst.
 gamma_beta_mle <- function(x, alpha) {
   return(length(x)*alpha*1/sum(x))
 }
-gamma_beta_mle(x1, 2)
-gamma_beta_mle(x2, 2)
+gamma_beta_mle(x1, 4)
+gamma_beta_mle(x2, 4)
 ```
-Vi testade att öka antalet dragningar och drar slutsatsen att estimatet går mot 0.5
+Vi testade att öka antalet dragningar och drar slutsatsen att estimatet går mot 1.0.
 
 
 # Uppgift 3 Punktskattning med MLE i en normalfördelning
