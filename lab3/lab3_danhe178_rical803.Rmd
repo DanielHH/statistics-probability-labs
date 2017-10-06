@@ -162,29 +162,64 @@ XMoreThanHalfInteresting(post_B)
 # aposterior för produkt A
 x <- seq(0, 1, 0.001)
 A_beta <- rbeta(x, 15, 8)
-hist(rbinom(10000, 87, mean(A_beta)))
+A_rbin <- rbinom(10000, 87, mean(A_beta))
+hist(A_rbin)
 ```
 
 ```{r, echo = TRUE}
 # aposterior för produkt B
 x <- seq(0, 1, 0.001)
 B_beta <- rbeta(x, 3, 10)
-hist(rbinom(10000, 87, mean(B_beta)))
+B_rbin <- rbinom(10000, 87, mean(B_beta))
+hist(B_rbin)
 
 ```
 
 ## 1)
 
-## 2)
-
-
-
-
 ```{r, echo = TRUE}
-# p: probability vector (ex. 0:1), x: number of successes, n: draws 
-binom_likelihood <- function(p, x, n) {
- return(choose(n, x)*p**x*(1-p)**(n-x)) 
-}
+ length(A_rbin[A_rbin>40])/length(A_rbin)
+ length(B_rbin[B_rbin>40])/length(B_rbin)
+```
+## 2)
+```{r, echo = TRUE}
+# calculate expected value for binomialdistribution
+87 * mean(A_beta)
+87 * mean(B_beta)
+```
+
+
+# uppgift 3 Aktieanalys
+
+## a) Ange en prior
+```{r, echo = TRUE}
+mean <- 0.07/365 # 7 procent genomsnittlig avkastning per år
+variance = 0.001**2 # daglig varians på avkastningen
+xfit <- seq(-0.007, 0.007, 0.0001)
+prior <- dnorm(xfit, mean, variance**(1/2))
+plot(xfit, prior, type = "l")
+```
+
+## b) räkna ut E[my|data],
+```{r, echo = TRUE}
+data = c(0.0315, -0.0180, -0.0021, -0.0202, 0.0076)
+mean_data <- mean(data)
+sigma2 <- sum((data-mean_data)**2)/(length(data)-1) # variance
+
+omega <- (length(data)/sigma2)/(length(data)/sigma2+1/variance)
+myx <- omega*mean(data)+(1-omega)*mean # väntevärde för aposterior
+thau2x <- 1/(length(data)/sigma2 + 1/variance)
+aposterior <- dnorm(xfit, myx, thau2x**(1/2))
+plot(xfit, aposterior, type = "l")
+
+```
+
+## c)
+```{r, echo = TRUE}
+post_sim <- rnorm(10000, myx, thau2x**(1/2))
+hist(post_sim)
+
+```
 
 
 
