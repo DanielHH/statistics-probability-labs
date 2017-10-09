@@ -5,8 +5,14 @@ date: "2017-10-11"
 output: pdf_document
 ---
 
+
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = TRUE}
+library(gtools)
 ```
 
 # Uppgift 1 Visualisera posteriorn
@@ -175,53 +181,164 @@ hist(B_rbin)
 
 ```
 
-## 1)
-
+### 1) Hur stor är sannolikheten att ni får fler än 40 intresserade kunder med respektive produkt?
 ```{r, echo = TRUE}
+# Produkt A:
  length(A_rbin[A_rbin>40])/length(A_rbin)
+
+# Produkt B:
  length(B_rbin[B_rbin>40])/length(B_rbin)
 ```
-## 2)
+
+### 2) Beräkna väntevärdet på respektive produkt
 ```{r, echo = TRUE}
-# calculate expected value for binomialdistribution
+# Produkt A:
 87 * mean(A_beta)
+
+#Produkt B:
 87 * mean(B_beta)
 ```
 
 
-# uppgift 3 Aktieanalys
+# Uppgift 3 Aktieanalys
 
 ## a) Ange en prior
 ```{r, echo = TRUE}
 mean <- 0.07/365 # 7 procent genomsnittlig avkastning per år
-variance = 0.001**2 # daglig varians på avkastningen
+variance = 0.001**2 # daglig varians på avkastningen (osäkerhet)
 xfit <- seq(-0.007, 0.007, 0.0001)
 prior <- dnorm(xfit, mean, variance**(1/2))
 plot(xfit, prior, type = "l")
+dnorm()
 ```
 
 ## b) räkna ut E[my|data],
 ```{r, echo = TRUE}
 data = c(0.0315, -0.0180, -0.0021, -0.0202, 0.0076)
 mean_data <- mean(data)
-sigma2 <- sum((data-mean_data)**2)/(length(data)-1) # variance
+sigma2 <- sum((data-mean_data)**2)/(length(data) - 1) # variance
 
 omega <- (length(data)/sigma2)/(length(data)/sigma2+1/variance)
 myx <- omega*mean(data)+(1-omega)*mean # väntevärde för aposterior
 thau2x <- 1/(length(data)/sigma2 + 1/variance)
 aposterior <- dnorm(xfit, myx, thau2x**(1/2))
 plot(xfit, aposterior, type = "l")
-
 ```
 
-## c)
+## c) Beräkna och visualisera Value-at-Risk
 ```{r, echo = TRUE}
 post_sim <- rnorm(10000, myx, thau2x**(1/2))
-hist(post_sim)
+post_sim <- sort(post_sim, decreasing = FALSE)
+post_sim_1perc <- post_sim[1:100]
+var <- abs(100000 * post_sim_1perc)
 
+hist(var)
 ```
 
+## d) Beräkna ett 95% sannolikhetsintervall för Value-at-Risk.
 
+```{r, echo = TRUE}
+quantile(var, probs = c(0.0, 0.95))
+```
+## e)
+
+Dessa antaganden är inte helt rimliga då avkastningar inte är oberoende över tid. Företaget kan under perioder till exempel ha utannonseringar vilket ökar hajpen för aktien och därmed stiger priset och därmed också avkstningen. Att företagets avkastningar är normalfördelade känns rimligt såvida företaget är etablerat och stabilt så dessa borde inte variera alltför mycket över tid. I vårt exempel kollar vi dessutom endast på data över fem dagar vilket är ett väldigt litet stickprov.
+
+
+# Uppgift 4 Analys av opinionsundersökningar
+
+## a) 
+```{r, echo = TRUE}
+set.seed(4711)
+voteprior <- rdirichlet(n = 1000, alpha = c(20, 8, 10, 4, 30, 7, 6, 13, 2))
+
+#Moderaterna
+hist(voteprior[,1], main = "Moderaterna")
+abline(v = 0.2333, col = "blue")
+
+#Folkpartiet
+hist(voteprior[,2], main = "Folkpartiet")
+abline(v = 0.0542, col = "blue")
+
+#Centerpartiet
+hist(voteprior[,3], main = "Centerpartiet")
+abline(v = 0.0611, col = "green")
+
+#Kristdemokratera
+hist(voteprior[,4], main = "Kristdemokraterna")
+abline(v = 0.0457, col = "blue")
+
+#Socialdemokraterna
+hist(voteprior[,5], main = "Socialdemokraterna")
+abline(v = 0.3101, col = "red")
+
+#Vänsterpartiet
+hist(voteprior[,6], main = "Vänsterpartiet")
+abline(v = 0.0572, col = "red")
+
+#Miljöpartiet
+hist(voteprior[,7], main = "Miljöpartiet")
+abline(v = 0.0689, col = "green")
+
+#Sverigedemokraterna
+hist(voteprior[,8], main = "Sverigedemokraterna")
+abline(v = 0.1286, col = "blue")
+
+#Feministiskt initiativ
+hist(voteprior[,9], main = "Feministiskt initiativ")
+abline(v = 0.0312, col = "pink")
+```
+
+## b)
+
+2017-jun 	Sifo 	M: 15.9 	L: 6.2 	C: 13.4 	KD: 2.9 	S: 29.2 	V: 7.7 	MP: 4.0 	SD: 18.0 	FI: 2.1 	(UNCERTAIN: 11.7)
+
+Anta n = 200.
+
+Antal röster per parti:
+
+  ("=" är i följande fall "ungefär lika med".)
+  M: n * 0.159 = 32
+  L: n * 0.062 = 12
+  C: n * 0.134 = 27
+  KD: n * 0.029 = 6
+  S: n * 0.292 = 58
+  V: n * 0.077 = 15
+  MP: n * 0.040 = 8
+  SD: n * 0.180 = 36
+  FI: n * 0.021 = 4
+  (U: n * 0.117 = 23)
+
+## c)
+
+```{r, echo = TRUE}
+votepost <- rdirichlet(n = 10000, alpha = c(20+32, 8+12, 10+27, 4+6, 30+58, 7+15, 6+8, 13+36, 2+4))
+```
+
+### 1. Sannolikheten att rödgröna är större än alliansen.
+```{r, echo = TRUE}
+sum(votepost[,1]+votepost[,2]+votepost[,3]+votepost[,4]<votepost[,5]+votepost[,6]+votepost[,7])/10000
+```
+
+### 2. Sannolikheten att SD är större än M.
+```{r, echo = TRUE}
+sum(votepost[votepost[,8] > votepost[,1]])/10000
+```
+
+### 3. Sannolikheten att KD inte kommer in i riksdagen.
+```{r, echo = TRUE}
+sum(votepost[,4] < 0.04)/10000
+```
+
+### 4. Sannolikheten att MP inte kommer in i riksdagen.
+```{r, echo = TRUE}
+sum(votepost[,7] < 0.04)/10000
+```
+
+### 5. Sannolikhetsintervall (95%) för S.
+```{r, echo = TRUE}
+quantile(votepost[,5], probs = c(0.025, 0.975))
+```
 
 
 
