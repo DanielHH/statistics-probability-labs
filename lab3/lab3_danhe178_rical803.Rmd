@@ -349,7 +349,7 @@ sum(votepost[,1]+votepost[,2]+votepost[,3]+votepost[,4]<votepost[,5]+votepost[,6
 
 ### 2. Sannolikheten att SD är större än M.
 ```{r, echo = TRUE}
-sum(votepost[votepost[,8] > votepost[,1]])/10000
+sum(votepost[,8] > votepost[,1])/10000
 ```
 
 ### 3. Sannolikheten att KD inte kommer in i riksdagen.
