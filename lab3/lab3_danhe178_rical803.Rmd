@@ -8,11 +8,9 @@ output: pdf_document
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
-```{r, echo = TRUE}
 library(gtools)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Uppgift 1 Visualisera posteriorn
@@ -53,6 +51,9 @@ likelihoodplot <- plot(xfit, yfit, type = 'l', lwd = 3, col = "blue")
 ```
 
 ## d) 
+### Härledning av posterior för mu:
+![Härledning av posterior för mu del 1](postmu1.jpg)
+![Härledning av posterior för mu del 2](postmu2.jpg)
 
 
 ## e)
@@ -209,7 +210,6 @@ variance = 0.001**2 # daglig varians på avkastningen (osäkerhet)
 xfit <- seq(-0.007, 0.007, 0.0001)
 prior <- dnorm(xfit, mean, variance**(1/2))
 plot(xfit, prior, type = "l")
-dnorm()
 ```
 
 ## b) räkna ut E[my|data],
