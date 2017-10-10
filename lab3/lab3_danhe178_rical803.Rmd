@@ -1,7 +1,7 @@
 ---
 title: "lab3_danhe178_rical803"
 author: "Daniel Herzegh & Richard Friberg"
-date: "2017-10-11"
+date: "2017-10-10"
 output: pdf_document
 ---
 
@@ -47,7 +47,7 @@ while(i <= length(xfit)) {
  i <- i + 1
 }
 
-likelihoodplot <- plot(xfit, yfit, type = 'l', lwd = 3, col = "blue")
+likelihoodplot <- plot(xfit, exp(yfit), type = 'l', lwd = 3, col = "blue")
 ```
 
 ## d) 
@@ -61,7 +61,7 @@ likelihoodplot <- plot(xfit, yfit, type = 'l', lwd = 3, col = "blue")
 #posterior
 xfit <- seq(-5, 15, 0.01)
 posterior <- yfit + log(priorMu)
-plot(xfit, posterior, type = 'l', lwd = 3, col = "red")
+plot(xfit, exp(posterior), type = 'l', lwd = 3, col = "red")
 
 ```
 
@@ -220,6 +220,7 @@ sigma2 <- sum((data-mean_data)**2)/(length(data) - 1) # variance
 
 omega <- (length(data)/sigma2)/(length(data)/sigma2+1/variance)
 myx <- omega*mean(data)+(1-omega)*mean # väntevärde för aposterior
+print(myx)
 thau2x <- 1/(length(data)/sigma2 + 1/variance)
 aposterior <- dnorm(xfit, myx, thau2x**(1/2))
 plot(xfit, aposterior, type = "l")
@@ -253,66 +254,92 @@ set.seed(4711)
 voteprior <- rdirichlet(n = 1000, alpha = c(20, 8, 10, 4, 30, 7, 6, 13, 2))
 
 #Moderaterna
-hist(voteprior[,1], main = "Moderaterna")
+hist(voteprior[,1], main = "Moderaterna", xlim= c(0, 0.5))
 abline(v = 0.2333, col = "blue")
 
 #Folkpartiet
-hist(voteprior[,2], main = "Folkpartiet")
+hist(voteprior[,2], main = "Folkpartiet", xlim= c(0, 0.5))
 abline(v = 0.0542, col = "blue")
 
 #Centerpartiet
-hist(voteprior[,3], main = "Centerpartiet")
+hist(voteprior[,3], main = "Centerpartiet", xlim= c(0, 0.5))
 abline(v = 0.0611, col = "green")
 
 #Kristdemokratera
-hist(voteprior[,4], main = "Kristdemokraterna")
+hist(voteprior[,4], main = "Kristdemokraterna", xlim= c(0, 0.5))
 abline(v = 0.0457, col = "blue")
 
 #Socialdemokraterna
-hist(voteprior[,5], main = "Socialdemokraterna")
+hist(voteprior[,5], main = "Socialdemokraterna", xlim= c(0, 0.5))
 abline(v = 0.3101, col = "red")
 
 #Vänsterpartiet
-hist(voteprior[,6], main = "Vänsterpartiet")
+hist(voteprior[,6], main = "Vänsterpartiet", xlim= c(0, 0.5))
 abline(v = 0.0572, col = "red")
 
 #Miljöpartiet
-hist(voteprior[,7], main = "Miljöpartiet")
+hist(voteprior[,7], main = "Miljöpartiet", xlim= c(0, 0.5))
 abline(v = 0.0689, col = "green")
 
 #Sverigedemokraterna
-hist(voteprior[,8], main = "Sverigedemokraterna")
+hist(voteprior[,8], main = "Sverigedemokraterna", xlim= c(0, 0.5))
 abline(v = 0.1286, col = "blue")
 
 #Feministiskt initiativ
-hist(voteprior[,9], main = "Feministiskt initiativ")
+hist(voteprior[,9], main = "Feministiskt initiativ", xlim= c(0, 0.5))
 abline(v = 0.0312, col = "pink")
 ```
 
 ## b)
 
-2017-jun 	Sifo 	M: 15.9 	L: 6.2 	C: 13.4 	KD: 2.9 	S: 29.2 	V: 7.7 	MP: 4.0 	SD: 18.0 	FI: 2.1 	(UNCERTAIN: 11.7)
+2017-jun 	Sifo 	M: 15.9 	L: 6.2 	C: 13.4 	KD: 2.9 	S: 29.2 	V: 7.7 	MP: 4.0 	SD: 18.0 	FI: 2.1
 
 Anta n = 200.
 
 Antal röster per parti:
 
   ("=" är i följande fall "ungefär lika med".)
+  
   M: n * 0.159 = 32
+  
   L: n * 0.062 = 12
+  
   C: n * 0.134 = 27
+  
   KD: n * 0.029 = 6
+  
   S: n * 0.292 = 58
+  
   V: n * 0.077 = 15
+  
   MP: n * 0.040 = 8
+  
   SD: n * 0.180 = 36
+  
   FI: n * 0.021 = 4
-  (U: n * 0.117 = 23)
 
 ## c)
 
 ```{r, echo = TRUE}
 votepost <- rdirichlet(n = 10000, alpha = c(20+32, 8+12, 10+27, 4+6, 30+58, 7+15, 6+8, 13+36, 2+4))
+
+i = 1
+while(i <= 10000) {
+  j = 1
+  while(j <= 9) {
+    if (votepost[i,j] < 0.04) {
+      votepost[i,j] <- 0
+    }
+    j <- j + 1
+  }
+  c <- 1/sum(votepost[i,])
+  k = 1
+  while (k <= 9) {
+    votepost[i,k] <- votepost[i,k] * c
+    k <- k + 1
+  }
+  i <- i + 1
+} 
 ```
 
 ### 1. Sannolikheten att rödgröna är större än alliansen.
